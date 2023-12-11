@@ -1,6 +1,9 @@
 package Data
 
-import "sync"
+import (
+	"errors"
+	"sync"
+)
 
 var MirrorsList = []string{
 	"http://ftp.am.debian.org/debian/",
@@ -89,4 +92,11 @@ func (s *MemoryStorage) Insert(e *Employee) {
 
 	s.counter++
 	s.Unlock()
+}
+
+func (s *MemoryStorage) Get(id int) (Employee, error) {
+	if _, exist := s.data[id]; exist == false {
+		errors.New("Employee not found")
+	}
+	return s.data[id], nil
 }
