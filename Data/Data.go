@@ -1,5 +1,7 @@
 package Data
 
+import "sync"
+
 var MirrorsList = []string{
 	"http://ftp.am.debian.org/debian/",
 	"http://ftp.au.debian.org/debian/",
@@ -49,4 +51,42 @@ var MirrorsList = []string{
 	"http://ftp.tr.debian.org/debian/",
 	"http://ftp.uk.debian.org/debian/",
 	"http://ftp.us.debian.org/debian/",
+}
+
+type Employee struct {
+	Id     int    `json:"id"`
+	Name   string `json:"name"`
+	Age    int    `json:"age"`
+	Sex    string `json:"sex"`
+	Salary int    `json:"salary"`
+}
+
+type Storage interface {
+	Insert(e *Employee)
+	Get(id int) (Employee, error)
+	Update(id int, e Employee)
+	Delete(id int)
+}
+
+type MemoryStorage struct {
+	counter int
+	data    map[int]Employee
+	sync.Mutex
+}
+
+func NewMemoryStorage() *MemoryStorage {
+	return &MemoryStorage{
+		data:    make(map[int]Employee),
+		counter: 1,
+	}
+}
+
+func (s *MemoryStorage) Insert(e *Employee) {
+	s.Lock()
+
+	e.Id = s.counter
+	s.data[e.Id] = *e
+
+	s.counter++
+	s.Unlock()
 }
