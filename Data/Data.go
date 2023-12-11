@@ -100,3 +100,9 @@ func (s *MemoryStorage) Get(id int) (Employee, error) {
 	}
 	return s.data[id], nil
 }
+
+func (s *MemoryStorage) Delete(id int) {
+	if _, exist := s.data[id]; exist == false {
+		errors.New("User doesn't delete")
+	}
+}
