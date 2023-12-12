@@ -68,7 +68,7 @@ type Storage interface {
 	Insert(e *Employee)
 	Get(id int) (Employee, error)
 	Update(id int, e Employee) Employee
-	Delete(id int)
+	Delete(id int) error
 }
 
 type MemoryStorage struct {
@@ -101,10 +101,11 @@ func (s *MemoryStorage) Get(id int) (Employee, error) {
 	return s.data[id], nil
 }
 
-func (s *MemoryStorage) Delete(id int) {
+func (s *MemoryStorage) Delete(id int) error {
 	if _, exist := s.data[id]; exist == false {
-		errors.New("User doesn't delete")
+		return errors.New("User doesn't delete")
 	}
+	return nil
 }
 
 func (s *MemoryStorage) Update(id int, e Employee) Employee {
