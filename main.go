@@ -20,7 +20,7 @@ func main() {
 
 	router.ServeFiles("/static/*filepath", http.Dir("C:\\Users\\1\\Desktop"))
 	router.GET("/api/v1/getEmployee/:id", getEmployeeHandler)
-	router.DELETE("/api/v1/deleteEmployee/:id")
+	router.DELETE("/api/v1/deleteEmployee/:id", deleteEmployeeHandler)
 
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
@@ -42,7 +42,7 @@ func getEmployeeHandler(w http.ResponseWriter, r *http.Request, params httproute
 	w.Write(jsonString)
 }
 
-func deleteEmployeeHandler(w http.ResponseWriter, r http.Request, params httprouter2.Params) {
+func deleteEmployeeHandler(w http.ResponseWriter, r *http.Request, params httprouter2.Params) {
 	val, er := strconv.Atoi(params.ByName("id"))
 
 	if er != nil {
