@@ -19,8 +19,9 @@ func main() {
 	router := httprouter2.New()
 
 	router.ServeFiles("/static/*filepath", http.Dir("C:\\Users\\1\\Desktop"))
-	router.GET("/api/v1/getEmployee/:id", getEmployeeHandler)
-	router.DELETE("/api/v1/deleteEmployee/:id", deleteEmployeeHandler)
+	router.GET("/api/v1/employee/get/:id", getEmployeeHandler)
+	router.DELETE("/api/v1/employee/delete/:id", deleteEmployeeHandler)
+	router.POST("/api/v1/employee/create", createEmployeeHandler)
 
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
@@ -56,4 +57,13 @@ func deleteEmployeeHandler(w http.ResponseWriter, r *http.Request, params httpro
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func createEmployeeHandler(w http.ResponseWriter, r *http.Request, params httprouter2.Params) {
+	name := r.Form.Get("name")
+	age, _ := strconv.Atoi(r.Form.Get("age"))
+	sex := r.Form.Get("sex")
+	salary, _ := strconv.Atoi(r.Form.Get("salary"))
+
+	storage.Insert(name, age, sex, salary)
 }

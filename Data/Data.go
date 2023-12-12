@@ -65,7 +65,7 @@ type Employee struct {
 }
 
 type Storage interface {
-	Insert(e *Employee)
+	Insert(name string, age int, sex string, salary int)
 	Get(id int) (Employee, error)
 	Update(id int, e Employee) Employee
 	Delete(id int) error
@@ -84,11 +84,18 @@ func NewMemoryStorage() *MemoryStorage {
 	}
 }
 
-func (s *MemoryStorage) Insert(e *Employee) {
+func (s *MemoryStorage) Insert(name string, age int, sex string, salary int) {
 	s.Lock()
 
-	e.Id = s.counter
-	s.data[e.Id] = *e
+	emp := Employee{
+		Age:    age,
+		Sex:    sex,
+		Name:   name,
+		Salary: salary,
+		Id:     s.counter,
+	}
+
+	s.data[s.counter] = emp
 
 	s.counter++
 	s.Unlock()
