@@ -40,6 +40,7 @@ func getEmployeeHandler(w http.ResponseWriter, r *http.Request, params httproute
 	}
 
 	jsonString, _ := json.Marshal(Response{UserId: resp.Id})
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonString)
 }
