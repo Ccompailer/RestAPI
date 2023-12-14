@@ -3,6 +3,7 @@ package main
 import (
 	"awesomeProject/Data"
 	"encoding/json"
+	"fmt"
 	httprouter2 "github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
@@ -23,6 +24,7 @@ func main() {
 	router.DELETE("/api/v1/employee/delete/:id", deleteEmployeeHandler)
 	router.POST("/api/v1/employee/create", createEmployeeHandler)
 	router.PATCH("/api/v1/employee/update/:id", updateEmployeeHandler)
+	router.GET("/api/v1/employee/get/:id/test", customMiddleware(getEmployeeHandler))
 
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
@@ -90,4 +92,12 @@ func updateEmployeeHandler(w http.ResponseWriter, r *http.Request, params httpro
 
 	jsonString, _ := json.Marshal(emp)
 	w.Write(jsonString)
+}
+
+func customMiddleware(originHandler httprouter2.Handle) httprouter2.Handle {
+	return httprouter2.Handle(func(w http.ResponseWriter, r *http.Request, params httprouter2.Params) {
+		fmt.Print("Work middleware before handler")
+
+		fmt.Print("Work middleware after handler")
+	})
 }
