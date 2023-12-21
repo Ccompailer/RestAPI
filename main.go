@@ -18,13 +18,15 @@ var storage Data.Storage = Data.NewMemoryStorage()
 
 func main() {
 	router := httprouter2.New()
+	originalHandler := http.HandlerFunc(handlerForMiddleware)
 
 	router.ServeFiles("/api/v1/static/*filepath", http.Dir("C:\\Users\\1\\Desktop"))
 	router.GET("/api/v1/employee/get/:id", getEmployeeHandler)
 	router.DELETE("/api/v1/employee/delete/:id", deleteEmployeeHandler)
 	router.POST("/api/v1/employee/create", createEmployeeHandler)
 	router.PATCH("/api/v1/employee/update/:id", updateEmployeeHandler)
-	router.GET("/api/v1/employee/get/:id/test", customMiddleware(getEmployeeHandler))
+	//router.GET("/api/v1/employee/get/:id/test", customMiddleware(getEmployeeHandler))
+	http.Handle("/", customMiddleware(originalHandler))
 
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
@@ -94,10 +96,15 @@ func updateEmployeeHandler(w http.ResponseWriter, r *http.Request, params httpro
 	w.Write(jsonString)
 }
 
-func customMiddleware(originHandler httprouter2.Handle) httprouter2.Handle {
-	return httprouter2.Handle(func(w http.ResponseWriter, r *http.Request, params httprouter2.Params) {
-		fmt.Print("Work middleware before handler")
+func handlerForMiddleware(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Execute mainHandler ...")
+	w.Write([]byte("OK"))
+}
 
+func customMiddleware(originHandler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Print("Work middleware before handler")
+		originHandler.ServeHTTP(w, r)
 		fmt.Print("Work middleware after handler")
 	})
 }
