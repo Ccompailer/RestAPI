@@ -25,7 +25,7 @@ func main() {
 	router.DELETE("/api/v1/employee/delete/:id", deleteEmployeeHandler)
 	router.POST("/api/v1/employee/create", createEmployeeHandler)
 	router.PATCH("/api/v1/employee/update/:id", updateEmployeeHandler)
-	router.GET("/api/v1/employee/get/:id/test", httprouterMiddleware(getEmployeeHandler))
+	router.GET("/api/v1/employee/get/:id/test", httpRouterMiddleware(getEmployeeHandler))
 	http.Handle("/", customMiddleware(originalHandler))
 
 	log.Fatal(http.ListenAndServe(":8000", router))
@@ -109,7 +109,7 @@ func customMiddleware(originHandler http.Handler) http.Handler {
 	})
 }
 
-func httprouterMiddleware(handle httprouter2.Handle) httprouter2.Handle {
+func httpRouterMiddleware(handle httprouter2.Handle) httprouter2.Handle {
 	return func(writer http.ResponseWriter, request *http.Request, params httprouter2.Params) {
 		handle(writer, request, params)
 	}
